@@ -1,11 +1,13 @@
 package com.example.travelexpertsandroidapp;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.example.travelexpertsandroidapp.models.Customer;
 import com.example.travelexpertsandroidapp.repositories.Constants;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -22,9 +24,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = this.getIntent();
+        Bundle bundle = intent.getExtras();
+        Customer loggedInUser = (Customer)bundle.getSerializable("user");
 
         if (checkPlatform() && checkPermission()) {
         setContentView(R.layout.activity_main);
+
+        Toast.makeText(getApplicationContext(),loggedInUser.getCustFirstName()+" "+loggedInUser.getCustLastName(),
+                Toast.LENGTH_LONG).show();
+
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -34,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+
         } else {
             explainPermission();
             requestPermission();

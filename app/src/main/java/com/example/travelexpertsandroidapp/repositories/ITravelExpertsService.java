@@ -6,17 +6,17 @@ import com.example.travelexpertsandroidapp.models.TravelPackage;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 
 public interface ITravelExpertsService {
-
-    //http://localhost:8181/TravelExperts/rs/packages/getallpackages
 
     @GET("packages/getallpackages")
     Call<List<TravelPackage>> getAllPackages();
 
-    @GET("login/authenticateuser")
-    Call<Customer> authenticateUser();
+    @POST("login/authenticateuser")
+    Call<Customer> authenticateUser(@Body Customer user);
 
 
 }

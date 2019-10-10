@@ -1,9 +1,10 @@
 package com.example.travelexpertsandroidapp.models;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class TravelPackage {
+public class TravelPackage implements Serializable {
     private int packageId;
     private BigDecimal pkgAgencyCommission;
     private BigDecimal pkgBasePrice;
