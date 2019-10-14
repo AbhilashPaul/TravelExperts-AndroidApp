@@ -12,9 +12,9 @@
         android:title="@string/title_package" />
 
     <item
-        android:id="@+id/navigation_dashboard"
-        android:icon="@drawable/ic_dashboard_black_24dp"
-        android:title="@string/title_dashboard" />
+        android:id="@+id/navigation_bookings"
+        android:icon="@drawable/ic_flight_takeoff_24px"
+        android:title="@string/title_bookings" />
 
     <item
         android:id="@+id/navigation_account"

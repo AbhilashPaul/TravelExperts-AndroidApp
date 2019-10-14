@@ -2,11 +2,11 @@ package com.example.travelexpertsandroidapp.views.login;
 import com.example.travelexpertsandroidapp.MainActivity;
 import com.example.travelexpertsandroidapp.R;
 import com.example.travelexpertsandroidapp.models.Customer;
+import com.example.travelexpertsandroidapp.models.TravelExpertsApp;
 import com.example.travelexpertsandroidapp.viewmodels.LoginViewModel;
 
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
@@ -35,7 +35,8 @@ public class LoginActivity extends AppCompatActivity {
         final Button loginButton = findViewById(R.id.login);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
 
-        loginViewModel = ViewModelProviders.of(this).get(LoginViewModel.class);
+        //get the view model
+        loginViewModel = ViewModelProviders.of(LoginActivity.this).get(LoginViewModel.class);
 
         //monitor changes in the login form state
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
@@ -56,33 +57,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        loginViewModel.getLoggedInUser().observe(this, new Observer<Customer>() {
-            @Override
-            public void onChanged(Customer customer) {
-                if (customer == null) {
-                    return;
-                }
-                loadingProgressBar.setVisibility(View.GONE);
-
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("user", customer);
-                Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
-                myIntent.putExtras(bundle); //Optional parameters
-                LoginActivity.this.startActivity(myIntent);
-
-                //Complete and destroy login activity once successful
-                finish();
-            }
-        });
-
-        //
-        loginViewModel.getFeedbackMessage().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(String s) {
-                Toast.makeText(getApplicationContext(),s,Toast.LENGTH_SHORT).show();
-            }
-        });
-
+        //text change listener to monitor changes in user input for username and password
         TextWatcher afterTextChangedListener = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -100,27 +75,61 @@ public class LoginActivity extends AppCompatActivity {
                         passwordEditText.getText().toString());
             }
         };
+
         usernameEditText.addTextChangedListener(afterTextChangedListener);
         passwordEditText.addTextChangedListener(afterTextChangedListener);
         passwordEditText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 //when user presses done in his virtual keyboard
-                //get username and password from input fields and pass it to viewmodel
+                //get username and password from input fields and pass it to view model
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    loginViewModel.login(usernameEditText.getText().toString(),
-                            passwordEditText.getText().toString());
+                    handleAuthentication(loadingProgressBar, usernameEditText, passwordEditText);
                 }
                 return false;
             }
         });
 
+        //handle user authentication when
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadingProgressBar.setVisibility(View.VISIBLE);
-                loginViewModel.login(usernameEditText.getText().toString(),
-                        passwordEditText.getText().toString());
+
+                handleAuthentication(loadingProgressBar, usernameEditText, passwordEditText);
+            }
+        });
+    }
+
+    //this method handles user login authentication
+    private void handleAuthentication(ProgressBar loadingProgressBar, EditText usernameEditText, EditText passwordEditText) {
+        loadingProgressBar.setVisibility(View.VISIBLE);
+        loginViewModel.login(usernameEditText.getText().toString(),
+                passwordEditText.getText().toString());
+
+        loginViewModel.getLoggedInUser().observe(LoginActivity.this, new Observer<Customer>() {
+            @Override
+            public void onChanged(Customer customer) {
+                if (customer == null) {
+                    return;
+                }
+                loadingProgressBar.setVisibility(View.GONE);
+
+                ((TravelExpertsApp)getApplication()).setLoggedInUser(customer);
+
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("user", customer);
+                Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+                mainIntent.putExtras(bundle); //Optional parameters
+                LoginActivity.this.startActivity(mainIntent);
+                //Complete and destroy login activity once successful
+               finish();
+            }
+        });
+
+        loginViewModel.getFeedbackMessage().observe(LoginActivity.this, new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                Toast.makeText(getApplicationContext(),s,Toast.LENGTH_SHORT).show();
             }
         });
     }

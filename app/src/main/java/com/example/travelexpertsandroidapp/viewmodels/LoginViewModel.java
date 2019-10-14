@@ -3,7 +3,7 @@ package com.example.travelexpertsandroidapp.viewmodels;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import com.example.travelexpertsandroidapp.repositories.LoginRepository;
+import com.example.travelexpertsandroidapp.repositories.UserRepository;
 import com.example.travelexpertsandroidapp.R;
 import com.example.travelexpertsandroidapp.models.Customer;
 import com.example.travelexpertsandroidapp.views.login.LoginFormState;
@@ -14,7 +14,7 @@ public class LoginViewModel extends ViewModel {
     private MutableLiveData<Customer> loggedInUser = new MutableLiveData<>();
     private MutableLiveData<String> feedbackMessage = new MutableLiveData<>();
     private static LoginViewModel instance;
-    private LoginRepository loginRepo;
+    private UserRepository userRepository;
 
     public LiveData<LoginFormState> getLoginFormState() { return loginFormState; }
     public LiveData<Customer> getLoggedInUser() {
@@ -24,10 +24,10 @@ public class LoginViewModel extends ViewModel {
 
     public LoginViewModel(){
         //get packages data from repo: executes retrofit call to gather package data set
-        loginRepo = LoginRepository.getInstance();
+        userRepository = UserRepository.getInstance();
         //retrieve data/feedback from repo
-        this.loggedInUser = loginRepo.getLoggedInUser();
-        this.feedbackMessage = loginRepo.getFeedbackMessage();
+        this.loggedInUser = userRepository.getLoggedInUser();
+        this.feedbackMessage = userRepository.getFeedbackMessage();
     }
 
     public void login(String username, String password) {
@@ -36,7 +36,7 @@ public class LoginViewModel extends ViewModel {
         user.setCustUsername(username);
         user.setCustPassword(password);
         //login
-        loginRepo.login(user);
+        userRepository.login(user);
     }
 
 

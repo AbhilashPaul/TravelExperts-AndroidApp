@@ -3,4 +3,9 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="lightblue">#D2C2FD</color>
+    <color name="darkblue">#4a26fd</color>
+    <color name="account_bg">#E3F2FD</color>
+    <color name="account_txt_primary">#FFFFFF</color>
+    <color name="account_txt_secondary">#1A237E</color>
 </resources>
