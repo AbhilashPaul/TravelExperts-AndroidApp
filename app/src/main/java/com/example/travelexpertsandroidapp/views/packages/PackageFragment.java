@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -15,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.travelexpertsandroidapp.R;
 import com.example.travelexpertsandroidapp.adapters.PackageRecyclerViewAdapter;
+import com.example.travelexpertsandroidapp.models.Customer;
+import com.example.travelexpertsandroidapp.models.TravelExpertsApp;
 import com.example.travelexpertsandroidapp.models.TravelPackage;
 import com.example.travelexpertsandroidapp.viewmodels.PackageViewModel;
 
@@ -36,23 +37,25 @@ public class PackageFragment extends Fragment {
         packageViewModel.getPackages().observe(this, new Observer<List<TravelPackage>>() {
             @Override
             public void onChanged(List<TravelPackage> travelPackages) {
-                //Only for debugging. remove once done.
-                /*StringBuilder sb= new StringBuilder();
-                for(TravelPackage pkg:travelPackages){
-                    sb.append(pkg.getPackageId());
-                    sb.append("/");
-                }
-                Toast.makeText(getActivity(),sb.toString(),Toast.LENGTH_LONG).show();*/
+                TravelExpertsApp app = ((TravelExpertsApp)getContext().getApplicationContext());
+                app.setPackages(travelPackages);
                 recyclerView.setAdapter( new PackageRecyclerViewAdapter(travelPackages,getContext()));
             }
         });
 
         initPackageRecyclerView();
 
-        packageViewModel.getFeedback().observe(this, new Observer<String>() {
+        /*packageViewModel.getFeedback().observe(this, new Observer<String>() {
             @Override
             public void onChanged(String s) {
                 Toast.makeText(getContext(),s,Toast.LENGTH_SHORT).show();
+            }
+        });*/
+
+        packageViewModel.getBookingFeedback().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                if( s != null){ Toast.makeText(getContext(),s,Toast.LENGTH_SHORT).show();}
             }
         });
 
@@ -67,6 +70,5 @@ public class PackageFragment extends Fragment {
         adapter = new PackageRecyclerViewAdapter(packageViewModel.getPackages().getValue(),getContext());
         recyclerView.setAdapter(adapter);
     }
-
 
 }

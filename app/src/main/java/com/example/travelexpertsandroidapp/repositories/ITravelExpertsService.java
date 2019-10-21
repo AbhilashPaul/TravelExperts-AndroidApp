@@ -1,5 +1,6 @@
 package com.example.travelexpertsandroidapp.repositories;
 
+import com.example.travelexpertsandroidapp.models.Booking;
 import com.example.travelexpertsandroidapp.models.Bookingdetail;
 import com.example.travelexpertsandroidapp.models.Customer;
 import com.example.travelexpertsandroidapp.models.TravelPackage;
@@ -26,4 +27,7 @@ public interface ITravelExpertsService {
 
     @PUT("customer/updatecustomer")
     Call<Customer> updateUser(@Body Customer user);
+
+    @POST("booking/makeabooking")
+    Call<String> createBooking(@Body Booking booking);
 }

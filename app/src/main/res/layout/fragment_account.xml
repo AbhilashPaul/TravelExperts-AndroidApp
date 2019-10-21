@@ -27,15 +27,6 @@
                     android:background="@drawable/account_background"
                     android:orientation="vertical">
 
-                    <Button
-                        android:id="@+id/btnSignOut"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="right"
-                        android:layout_margin="10dp"
-                        android:text="Sign Out"
-                        android:textAlignment="center" />
-
                     <ImageView
                         android:layout_width="150dp"
                         android:layout_height="150dp"
@@ -53,9 +44,20 @@
                         android:background="@android:color/transparent"
                         android:enabled="false"
                         android:text=""
-                        android:textColor="@color/account_txt_primary"
+                        android:textColor="@color/color_black"
                         android:textSize="21sp"
                         android:textStyle="bold" />
+
+                    <Button
+                        android:id="@+id/btnSignOut"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="sans-serif"
+                        android:text="Sign Out"
+                        android:textAlignment="center"
+                        android:typeface="normal"
+                        app:icon="@drawable/ic_exit_to_app_24px" />
                 </LinearLayout>
             </RelativeLayout>
 
@@ -108,7 +110,6 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:background="@android:color/transparent"
-                        android:editable="false"
                         android:enabled="false"
                         android:paddingLeft="20dp"
                         android:text=""
@@ -176,7 +177,7 @@
                     <ImageView
                         android:layout_width="36dp"
                         android:layout_height="36dp"
-                        android:src="@drawable/ic_local_post_office_black_24dp" />
+                        android:src="@drawable/ic_location_on_black_24dp" />
 
                     <EditText
                         android:id="@+id/txtProvPostalCode"
@@ -199,8 +200,10 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="35dp"
                 android:background="@drawable/button_style"
+                android:fontFamily="sans-serif"
                 android:text="Update"
-                android:textColor="#fff" />
+                android:textColor="#fff"
+                android:typeface="normal" />
 
         </LinearLayout>
     </ScrollView>

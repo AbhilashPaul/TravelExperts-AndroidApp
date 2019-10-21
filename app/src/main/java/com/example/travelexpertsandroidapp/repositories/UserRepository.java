@@ -103,6 +103,7 @@ public class UserRepository {
 
                 loggedInUser.setValue(response.body());
                 feedbackMessage.setValue("Successfully updated");
+
             }
 
             @Override

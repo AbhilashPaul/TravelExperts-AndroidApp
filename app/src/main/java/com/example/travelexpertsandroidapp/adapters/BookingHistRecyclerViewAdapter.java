@@ -10,20 +10,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.travelexpertsandroidapp.R;
 import com.example.travelexpertsandroidapp.models.Bookingdetail;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
-public class BookingRecyclerViewAdapter extends RecyclerView.Adapter<BookingRecyclerViewAdapter.ViewHolder>{
+public class BookingHistRecyclerViewAdapter extends RecyclerView.Adapter<BookingHistRecyclerViewAdapter.ViewHolder>{
     private List<Bookingdetail> bookings;
     private Context context;
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yyyy");
-    private NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.CANADA);
-    private DecimalFormat decimalFormat = new DecimalFormat("0.#");
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMMM yyyy");
+    NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.CANADA);
+    DecimalFormat decimalFormat = new DecimalFormat("0.#");
 
-    public BookingRecyclerViewAdapter(List<Bookingdetail> bookings, Context context) {
+    public BookingHistRecyclerViewAdapter(List<Bookingdetail> bookings, Context context) {
         this.bookings = bookings;
         this.context = context;
     }
@@ -38,13 +39,11 @@ public class BookingRecyclerViewAdapter extends RecyclerView.Adapter<BookingRecy
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
         Bookingdetail booking = bookings.get(position);
-
         holder.tvBookingNo.setText("Booking Ref: "+booking.getBooking().getBookingNo());
         holder.tvDestination.setText("Destination: "+booking.getDestination());
         holder.tvDates.setText(simpleDateFormat.format(booking.getTripStart())+" To "+
-                                simpleDateFormat.format(booking.getTripEnd()));
+                simpleDateFormat.format(booking.getTripEnd()));
         holder.tvPrice.setText("Price: "+currencyFormat.format(booking.getBasePrice()));
     }
 

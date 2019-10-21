@@ -1,13 +1,11 @@
 package com.example.travelexpertsandroidapp.repositories;
 
 import androidx.lifecycle.MutableLiveData;
-
+import com.example.travelexpertsandroidapp.models.Booking;
 import com.example.travelexpertsandroidapp.models.Bookingdetail;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -22,16 +20,13 @@ public class BookingRepository {
 
     //singleton instance constructor
     public static BookingRepository getInstance(){
-        if(instance == null){
-            instance = new BookingRepository();
-        }
+        if(instance == null){instance = new BookingRepository();}
         return instance;
     }
 
     public MutableLiveData<List<Bookingdetail>> getBookingDataSet() {
         return bookingDataSet;
     }
-
     public MutableLiveData<String> getFeedbackMessage() {
         return feedbackMessage;
     }

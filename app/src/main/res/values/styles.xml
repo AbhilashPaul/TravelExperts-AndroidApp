@@ -5,9 +5,10 @@
         <!-- Customize your theme here. -->
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
-        <item name="colorPrimary">#AD1457</item>
-        <item name="colorPrimaryDark">#880E4F</item>
-        <item name="colorAccent">#F50057</item>
+        <item name="colorPrimary">#455a64</item>
+        <item name="colorPrimaryDark">#1c313a</item>
+        <item name="colorAccent">#aab6fe</item>
+        <item name="colorOnSecondary">#64ffda</item>
     </style>
 
 </resources>
