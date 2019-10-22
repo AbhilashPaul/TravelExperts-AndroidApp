@@ -7,6 +7,8 @@ import com.example.travelexpertsandroidapp.models.TravelPackage;
 
 import java.util.List;
 
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -29,5 +31,5 @@ public interface ITravelExpertsService {
     Call<Customer> updateUser(@Body Customer user);
 
     @POST("booking/makeabooking")
-    Call<String> createBooking(@Body Booking booking);
+    Call<ResponseBody> createBooking(@Body Booking booking);
 }

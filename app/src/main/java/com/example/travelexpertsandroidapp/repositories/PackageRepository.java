@@ -8,11 +8,14 @@ import com.example.travelexpertsandroidapp.models.TravelPackage;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.util.List;
+
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class PackageRepository {
 
@@ -42,6 +45,7 @@ public class PackageRepository {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.URL_TRAVELEXPERTS_SERVICE)
                 .addConverterFactory(GsonConverterFactory.create(gson))
+                .addConverterFactory(ScalarsConverterFactory.create())
                 .build();
 
         ITravelExpertsService mTravelExpertsService = retrofit.create(ITravelExpertsService.class);
@@ -72,7 +76,11 @@ public class PackageRepository {
     }
 
     public void createBooking(Booking booking){
-        Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy, hh:mm:ss a").create();
+
+        Gson gson = new GsonBuilder()
+                .setDateFormat("MMM d, yyyy, hh:mm:ss a")
+                .setLenient()
+                .create();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.URL_TRAVELEXPERTS_SERVICE)
@@ -81,29 +89,32 @@ public class PackageRepository {
 
         ITravelExpertsService mTravelExpertsService = retrofit.create(ITravelExpertsService.class);
 
-        Call<String> call = mTravelExpertsService.createBooking(booking);
+        if(booking !=null) {
+            Call<ResponseBody> call = mTravelExpertsService.createBooking(booking);
 
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                if(!response.isSuccessful()){
-                    bookingFeedbackMessage.setValue("Responded with Code:"+response.code());
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (!response.isSuccessful()) {
+                        bookingFeedbackMessage.setValue("Error while trying to book your next trip. " +
+                                "Please try again! Code:" + response.code());
+                        return;
+                    }
+                    if (response.body() == null) {
+                        bookingFeedbackMessage.setValue("Error while trying to book your next trip. " +
+                                "Please try again!");
+                        return;
+                    }
+                    bookingFeedbackMessage.setValue("Congratulations! Successfully booked your next trip.");
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    bookingFeedbackMessage.setValue(t.getLocalizedMessage());
                     return;
                 }
-                if(response.body() == null){
-                    bookingFeedbackMessage.setValue("No response received!");
-                    return;
-                }
-                String status = response.body();
-                bookingFeedbackMessage.setValue("Success!");
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                bookingFeedbackMessage.setValue(t.getLocalizedMessage());
-                return;
-            }
-        });
+            });
+        }
     }
 }
 

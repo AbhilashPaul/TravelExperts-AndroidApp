@@ -1,7 +1,6 @@
 package com.example.travelexpertsandroidapp.repositories;
 
 import androidx.lifecycle.MutableLiveData;
-import com.example.travelexpertsandroidapp.models.Booking;
 import com.example.travelexpertsandroidapp.models.Bookingdetail;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -48,15 +47,15 @@ public class BookingRepository {
             @Override
             public void onResponse(Call<List<Bookingdetail>> call, Response<List<Bookingdetail>> response) {
                 if(!response.isSuccessful()){
-                    feedbackMessage.setValue("Responded with Code:"+response.code());
+                    feedbackMessage.setValue("Responded with Code: "+response.code());
                     return;
                 }
                 if(response.body() == null){
-                    feedbackMessage.setValue("Nothing returned");
+                    feedbackMessage.setValue("No response received");
                     return;
                 }
                 bookingDataSet.setValue(response.body());
-                feedbackMessage.setValue("Bookings received");
+                //feedbackMessage.setValue("Bookings received");
             }
 
             @Override

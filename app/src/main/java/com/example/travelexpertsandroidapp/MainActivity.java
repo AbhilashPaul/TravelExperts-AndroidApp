@@ -34,8 +34,8 @@ public class MainActivity extends AppCompatActivity {
         if (checkPlatform() && checkPermission()) {
         setContentView(R.layout.activity_main);
 
-        Toast.makeText(getApplicationContext(),loggedInUser.getCustFirstName()+" "+loggedInUser.getCustLastName(),
-                Toast.LENGTH_LONG).show();
+        /*Toast.makeText(getApplicationContext(),loggedInUser.getCustFirstName()+" "+loggedInUser.getCustLastName(),
+                Toast.LENGTH_LONG).show();*/
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each

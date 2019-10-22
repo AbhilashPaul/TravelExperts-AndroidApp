@@ -8,6 +8,8 @@ import com.example.travelexpertsandroidapp.R;
 import com.example.travelexpertsandroidapp.models.Customer;
 import com.example.travelexpertsandroidapp.views.login.LoginFormState;
 
+import java.util.regex.Pattern;
+
 public class LoginViewModel extends ViewModel {
 
     private MutableLiveData<LoginFormState> loginFormState = new MutableLiveData<>();
@@ -55,7 +57,8 @@ public class LoginViewModel extends ViewModel {
         if (username == null) {
             return false;
         }
-        if (username.trim().length() > 5) {
+        final Pattern pattern = Pattern.compile("^[A-Za-z0-9-_.]{5,}$");
+        if (pattern.matcher(username.trim()).matches()){
             return true;
         } else {
             return false;
