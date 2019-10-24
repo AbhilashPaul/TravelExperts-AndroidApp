@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.example.travelexpertsandroidapp.R;
 import com.example.travelexpertsandroidapp.models.Customer;
 import com.example.travelexpertsandroidapp.models.TravelExpertsApp;
+import com.example.travelexpertsandroidapp.utilities.InputValidator;
 import com.example.travelexpertsandroidapp.viewmodels.AccountViewModel;
 import com.example.travelexpertsandroidapp.views.login.LoginActivity;
 
@@ -77,16 +78,76 @@ public class AccountFragment extends Fragment {
             public void onClick(View v) {
                 if(txtName.isEnabled()){
                     Customer customer = app.getLoggedInUser();
-                    String[] name = (txtName.getText().toString()).split(" ", 2);
-                    customer.setCustFirstName(name[0].trim());
-                    customer.setCustLastName(name[1].trim());
-                    customer.setCustAddress(txtAddress.getText().toString().trim());
-                    customer.setCustCity(txtCity.getText().toString().trim());
-                    customer.setCustEmail(txtEmail.getText().toString().trim());
-                    customer.setCustHomePhone(txtPhone.getText().toString().trim());
-                    String[] prov_post = (txtProvPostalCode.getText().toString()).split(",", 2);
-                    customer.setCustProv(prov_post[0].trim());
-                    customer.setCustPostal(prov_post[1].trim());
+                    //boolean isInputsValid = false;
+                    //verify name field
+                    if(InputValidator.isPresent(txtName) &&
+                            InputValidator.isTextOnly(txtName.getText().toString())){
+                        //isInputsValid = true;
+                        String[] name = (txtName.getText().toString()).split(" ", 2);
+                        customer.setCustFirstName(name[0].trim());
+                        customer.setCustLastName(name[1].trim());
+                    }else{
+                        Toast.makeText(getContext(),"Please verify the name.",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    //check if address is entered
+                    if(InputValidator.isPresent(txtAddress)){
+                        //isInputsValid = true;
+                        customer.setCustAddress(txtAddress.getText().toString().trim());
+                    }else{
+                        Toast.makeText(getContext(),"Please specify address.",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    //check if city is entered
+                    if(InputValidator.isPresent(txtCity) &&
+                            InputValidator.isTextOnly(txtCity.getText().toString())){
+                        //isInputsValid = true;
+                        customer.setCustCity(txtCity.getText().toString().trim());
+                    }else{
+                        Toast.makeText(getContext(),"Please check the city name entered.",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    //verify email
+                    if(InputValidator.isPresent(txtEmail) &&
+                            InputValidator.validateEmail(txtEmail.getText().toString().trim())){
+                        //isInputsValid = true;
+                        customer.setCustEmail(txtEmail.getText().toString().trim());
+                    }else{
+                        Toast.makeText(getContext(),"Please verify the email id provided.",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if(InputValidator.isPresent(txtPhone) &&
+                            InputValidator.validatePhoneNumber(txtPhone.getText().toString().trim())){
+                        //isInputsValid = true;
+                        customer.setCustHomePhone(txtPhone.getText().toString().trim());
+                    }else{
+                        Toast.makeText(getContext(),"Please verify the phone number.",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    String[] prov_post = null;
+                    if(InputValidator.isPresent(txtProvPostalCode)){
+                        prov_post = (txtProvPostalCode.getText().toString()).split(",", 2);
+                        //isInputsValid = true;
+                    }else{
+                        Toast.makeText(getContext(),"Please enter the province and postal code (eg: AB T2L 3M1).",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if(InputValidator.isTextOnly(prov_post[0].trim())){
+                        customer.setCustProv(prov_post[0].trim());
+                    }else{
+                        Toast.makeText(getContext(),"Please enter the province and postal code (eg: AB T2L 3M1).",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if(InputValidator.validatePostalCode(prov_post[1].trim())){
+                        customer.setCustPostal(prov_post[1].trim());
+                    }else{
+                        Toast.makeText(getContext(),"Please enter a valid postal code.",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
                     accountViewModel.updateUserData(customer);
                     enableEditTextFields(false);
                 }else{

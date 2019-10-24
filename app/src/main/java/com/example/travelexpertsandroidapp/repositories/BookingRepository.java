@@ -23,6 +23,7 @@ public class BookingRepository {
         return instance;
     }
 
+    //getters
     public MutableLiveData<List<Bookingdetail>> getBookingDataSet() {
         return bookingDataSet;
     }

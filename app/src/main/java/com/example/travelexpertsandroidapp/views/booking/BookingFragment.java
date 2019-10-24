@@ -4,24 +4,21 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextClock;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.travelexpertsandroidapp.R;
 import com.example.travelexpertsandroidapp.adapters.BookingHistRecyclerViewAdapter;
 import com.example.travelexpertsandroidapp.adapters.BookingRecyclerViewAdapter;
 import com.example.travelexpertsandroidapp.models.Bookingdetail;
 import com.example.travelexpertsandroidapp.models.TravelExpertsApp;
 import com.example.travelexpertsandroidapp.viewmodels.BookingViewModel;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -33,7 +30,7 @@ public class BookingFragment extends Fragment {
     private RecyclerView rvBookingsHist;
     private RecyclerView.Adapter adapterBookingHist, adapterBooking;
     private TextView txtTrips, txtTripsHist;
-
+    private LinearLayout llmTrip, llmTripHist;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -42,44 +39,49 @@ public class BookingFragment extends Fragment {
         rvBookingsHist = root.findViewById(R.id.rvBookingsHist);
         txtTrips =root.findViewById(R.id.txtTrips);
         txtTripsHist=root.findViewById(R.id.txtTripHistory);
-        txtTripsHist.setVisibility(View.INVISIBLE);
-        txtTrips.setVisibility(View.INVISIBLE);
-
-        int customerId =((TravelExpertsApp)getActivity().getApplication()).getLoggedInUser().getCustomerId();
+        llmTrip = root.findViewById(R.id.llmTrip);
+        llmTripHist = root.findViewById(R.id.llmTripHist);
         bookingViewModel = ViewModelProviders.of(this).get(BookingViewModel.class);
-        bookingViewModel.getBookingsFromRepo(customerId);
 
+        //grab the customer id from the app context
+        int customerId =((TravelExpertsApp)getActivity().getApplication()).getLoggedInUser().getCustomerId();
+        //retrieve booking and dispaly them on the fragment
+        bookingViewModel.getBookingsFromRepo(customerId);
         bookingViewModel.getBookings().observe(this, new Observer<List<Bookingdetail>>() {
             @Override
             public void onChanged(List<Bookingdetail> bookingdetails) {
                 List<Bookingdetail> upcomingTrips = new ArrayList<Bookingdetail>();
                 List<Bookingdetail> pastTrips = new ArrayList<Bookingdetail>();
+
                 //separate upcoming trips from past trips
-                for (Bookingdetail db: bookingdetails){
-                    if(db.getTripStart().after(new Date())){
-                        upcomingTrips.add(db);
-                    }else{
-                        pastTrips.add(db);
+                if(bookingdetails.size()!=0 ){
+                    for (Bookingdetail db: bookingdetails) {
+                        if (db.getTripStart().after(new Date())) {
+                            upcomingTrips.add(db);
+                        } else {
+                            pastTrips.add(db);
+                        }
                     }
+                }else{
+                    Toast.makeText(getActivity(),"You have not made any booking with us yet!",Toast.LENGTH_LONG).show();
                 }
-                //display both the list of trips
+                //display the list of upcoming trips and trip history
+
                 if(upcomingTrips.size()!=0){
-                    txtTrips.setVisibility(View.VISIBLE);
-                    rvBookings.setVisibility(View.VISIBLE);
+                    llmTrip.setVisibility(View.VISIBLE);
                     rvBookings.setAdapter(new BookingRecyclerViewAdapter(upcomingTrips,getContext()));
                 }else{
-                    txtTrips.setVisibility(View.GONE);
-                    rvBookings.setVisibility(View.GONE);
-                    Toast.makeText(getActivity(),"You have no upcoming Trips",Toast.LENGTH_LONG).show();
+                    //if there are no upcoming trips, hide the upcoming trips section and remove padding
+                    llmTrip.setPadding(0,0,0,0);
+                    llmTrip.setVisibility(View.GONE);
                 }
                 if(pastTrips.size()!=0){
-                    txtTripsHist.setVisibility(View.VISIBLE);
-                    rvBookingsHist.setVisibility(View.VISIBLE);
+                    llmTripHist.setVisibility(View.VISIBLE);
                     rvBookingsHist.setAdapter(new BookingRecyclerViewAdapter(pastTrips,getContext()));
                 }else{
-                    txtTripsHist.setVisibility(View.GONE);
-                    rvBookingsHist.setVisibility(View.GONE);
-                  }
+                    //if there are no past trips, hide the trip history section
+                    llmTripHist.setVisibility(View.GONE);
+                }
             }
         });
 
@@ -87,7 +89,7 @@ public class BookingFragment extends Fragment {
         initBookingRecyclerView();
         initBookingHistRecyclerView();
 
-        //get any feedback from ViewModel
+        //get any feedback from the ViewModel and toast it here
         bookingViewModel.getFeedback().observe(this, new Observer<String>() {
             @Override
             public void onChanged(String s) {
