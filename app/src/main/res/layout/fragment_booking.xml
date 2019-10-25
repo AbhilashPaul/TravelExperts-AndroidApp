@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/trip_history_bg">
+    android:background="@drawable/login_background">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -13,8 +13,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/login_background">
+            android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/llmTrip"

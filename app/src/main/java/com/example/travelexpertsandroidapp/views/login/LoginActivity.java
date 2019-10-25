@@ -3,10 +3,16 @@ import com.example.travelexpertsandroidapp.MainActivity;
 import com.example.travelexpertsandroidapp.R;
 import com.example.travelexpertsandroidapp.models.Customer;
 import com.example.travelexpertsandroidapp.models.TravelExpertsApp;
+import com.example.travelexpertsandroidapp.utilities.NetworkGlobalVariable;
+import com.example.travelexpertsandroidapp.utilities.NetworkUtil;
 import com.example.travelexpertsandroidapp.viewmodels.LoginViewModel;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
@@ -30,6 +36,10 @@ public class LoginActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        //register network callback
+        NetworkUtil.registerNetworkCallback(getApplicationContext());
+
         final EditText usernameEditText = findViewById(R.id.username);
         final EditText passwordEditText = findViewById(R.id.password);
         final Button loginButton = findViewById(R.id.login);
@@ -103,35 +113,52 @@ public class LoginActivity extends AppCompatActivity {
     //this method handles user login authentication
     private void handleAuthentication(ProgressBar loadingProgressBar, EditText usernameEditText, EditText passwordEditText) {
         loadingProgressBar.setVisibility(View.VISIBLE);
-        loginViewModel.login(usernameEditText.getText().toString(),
-                passwordEditText.getText().toString());
 
-        loginViewModel.getLoggedInUser().observe(LoginActivity.this, new Observer<Customer>() {
-            @Override
-            public void onChanged(Customer customer) {
-                if (customer == null) {
-                    return;
+        // Check network connection and alert the user if no active network found
+        if (!NetworkGlobalVariable.isNetworkConnected){
+            AlertDialog alertDialog = new AlertDialog.Builder(this)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle("No Network Connectivity")
+                    .setMessage("This app requires network connection. Please check your internet connection!")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            return;
+                        }
+                    })
+                    .show();
+        }else {
+
+            loginViewModel.login(usernameEditText.getText().toString(),
+                    passwordEditText.getText().toString());
+
+            loginViewModel.getLoggedInUser().observe(LoginActivity.this, new Observer<Customer>() {
+                @Override
+                public void onChanged(Customer customer) {
+                    if (customer == null) {
+                        return;
+                    }
+                    loadingProgressBar.setVisibility(View.GONE);
+
+                    ((TravelExpertsApp) getApplication()).setLoggedInUser(customer);
+
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("user", customer);
+                    Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+                    mainIntent.putExtras(bundle); //Optional parameters
+                    LoginActivity.this.startActivity(mainIntent);
+                    //Complete and destroy login activity once successful
+                    finish();
                 }
-                loadingProgressBar.setVisibility(View.GONE);
+            });
 
-                ((TravelExpertsApp)getApplication()).setLoggedInUser(customer);
-
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("user", customer);
-                Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
-                mainIntent.putExtras(bundle); //Optional parameters
-                LoginActivity.this.startActivity(mainIntent);
-                //Complete and destroy login activity once successful
-               finish();
-            }
-        });
-
-        loginViewModel.getFeedbackMessage().observe(LoginActivity.this, new Observer<String>() {
-            @Override
-            public void onChanged(String s) {
-                Toast.makeText(getApplicationContext(),s,Toast.LENGTH_SHORT).show();
-            }
-        });
+            loginViewModel.getFeedbackMessage().observe(LoginActivity.this, new Observer<String>() {
+                @Override
+                public void onChanged(String s) {
+                    Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
 }
